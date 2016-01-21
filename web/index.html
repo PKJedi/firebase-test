@@ -1,0 +1,53 @@
+
+One character: <input />
+
+<p></p>
+
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script>
+
+const db = new Firebase("https://shining-torch-5768.firebaseio.com");
+
+if (!db.getAuth()) {
+    db.authAnonymously((error, authData) => {
+        if (error) {
+            console.log("Login Failed!", error);
+        }
+    });
+}
+
+db.onAuth(authData => {
+    console.log(authData);
+    const users = db.child('users');
+
+    users.on('value', snapshot => {
+        const users = snapshot.val();
+
+        const characters =
+            Object.keys(users)
+            .map(uid => users[uid])
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map(user => user['character']);
+
+        document.querySelector('p').innerText = characters.join('');
+    });
+
+    const me = users.child(authData.uid);
+
+    document.querySelector('input').addEventListener('keyup', event => {
+        const character = event.target.value[0];
+        event.target.value = '';
+
+        if (!character) {
+            return;
+        }
+
+        me.set({
+            character,
+            timestamp: Firebase.ServerValue.TIMESTAMP
+        });
+    });
+});
+
+</script>
+

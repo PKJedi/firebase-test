@@ -1,0 +1,9 @@
+{
+  "name": "firebase-test",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "dependencies": {
+    "firebase-tools": "^2.2.0"
+  }
+}
